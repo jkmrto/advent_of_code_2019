@@ -108,20 +108,19 @@ func findSoonerCrossPoint(crossPoints []crossPoint) int {
 }
 
 func main() {
-	test2()
 	seq0, seq1 := loadInstructions()
 
 	path0 := buildPath(seq0)
 	path1 := buildPath(seq1)
 
 	crossPoints := findCrossPoints(path0, path1)
-	fmt.Printf("%+v\n", crossPoints)
+	// fmt.Printf("%+v\n", crossPoints)
 
 	distance := findNearestCrossPoint(crossPoints)
-	fmt.Printf("%+v\n", distance)
+	fmt.Printf("Part1: %+v\n", distance)
 
 	minSteps := findSoonerCrossPoint(crossPoints)
-	fmt.Printf("%+v\n", minSteps)
+	fmt.Printf("Part2: %+v\n", minSteps)
 }
 
 // func test() {
@@ -135,36 +134,36 @@ func main() {
 // 	fmt.Printf("%+v", distance)
 // }
 
-func test1() {
-	seq0 := []string{"R75", "D30", "R83", "U83", "L12", "D49", "R71", "U7", "L72"}
-	seq1 := []string{"U62", "R66", "U55", "R34", "D71", "R55", "D58", "R83"}
+// func test1() {
+// 	seq0 := []string{"R75", "D30", "R83", "U83", "L12", "D49", "R71", "U7", "L72"}
+// 	seq1 := []string{"U62", "R66", "U55", "R34", "D71", "R55", "D58", "R83"}
 
-	path0 := buildPath(seq0)
-	path1 := buildPath(seq1)
+// 	path0 := buildPath(seq0)
+// 	path1 := buildPath(seq1)
 
-	crossPoints := findCrossPoints(path0, path1)
-	fmt.Printf("%+v\n", crossPoints)
+// 	crossPoints := findCrossPoints(path0, path1)
+// 	fmt.Printf("%+v\n", crossPoints)
 
-	distance := findNearestCrossPoint(crossPoints)
-	fmt.Printf("%+v\n", distance)
+// 	distance := findNearestCrossPoint(crossPoints)
+// 	fmt.Printf("%+v\n", distance)
 
-	minSteps := findSoonerCrossPoint(crossPoints)
-	fmt.Printf("%+v\n", minSteps)
-}
+// 	minSteps := findSoonerCrossPoint(crossPoints)
+// 	fmt.Printf("%+v\n", minSteps)
+// }
 
-func test2() {
-	seq0 := []string{"R98", "U47", "R26", "D63", "R33", "U87", "L62", "D20", "R33", "U53", "R51"}
-	seq1 := []string{"U98", "R91", "D20", "R16", "D67", "R40", "U7", "R15", "U6", "R7"}
+// func test2() {
+// 	seq0 := []string{"R98", "U47", "R26", "D63", "R33", "U87", "L62", "D20", "R33", "U53", "R51"}
+// 	seq1 := []string{"U98", "R91", "D20", "R16", "D67", "R40", "U7", "R15", "U6", "R7"}
 
-	path0 := buildPath(seq0)
-	path1 := buildPath(seq1)
+// 	path0 := buildPath(seq0)
+// 	path1 := buildPath(seq1)
 
-	crossPoints := findCrossPoints(path0, path1)
-	fmt.Printf("%+v\n", crossPoints)
+// 	crossPoints := findCrossPoints(path0, path1)
+// 	fmt.Printf("%+v\n", crossPoints)
 
-	distance := findNearestCrossPoint(crossPoints)
-	fmt.Printf("%+v\n", distance)
+// 	distance := findNearestCrossPoint(crossPoints)
+// 	fmt.Printf("%+v\n", distance)
 
-	minSteps := findSoonerCrossPoint(crossPoints)
-	fmt.Printf("%+v\n", minSteps)
-}
+// 	minSteps := findSoonerCrossPoint(crossPoints)
+// 	fmt.Printf("%+v\n", minSteps)
+// }
