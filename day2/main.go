@@ -42,7 +42,6 @@ func initSequence(origin []int, firstInput int, secondInput int) []int {
 func exercise2(numbers []int) int {
 	for i := 0; i < 99; i++ {
 		for j := 0; j < 99; j++ {
-			// fmt.Printf("%+v:", run(initSequence(numbers, i, j)))
 			if run(initSequence(numbers, i, j)) == 19690720 {
 				return i*100 + j
 			}
