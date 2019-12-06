@@ -59,7 +59,7 @@ func getValue(instructions []int, parameterMode int, value int) int {
 	return -1
 }
 
-func run(instructions []int) {
+func runPart1(instructions []int) {
 	input := 1
 	var value1 int
 	var value2 int
@@ -100,7 +100,87 @@ func run(instructions []int) {
 
 }
 
+func runPart2(instructions []int) {
+	input := 5
+	var value1 int
+	var value2 int
+	var value int
+	i := 0
+
+	for {
+		// fmt.Printf("%d\n", instructions[i])
+		opCode, parameterMode := ProcessInstruction(instructions[i])
+		// fmt.Printf("\n%+v\t", instructions[i])
+		// fmt.Printf("%d\t %+v", opCode, parameterMode)
+
+		switch opCode {
+		case 1:
+			value1 = getValue(instructions, parameterMode[2], instructions[i+1])
+			value2 = getValue(instructions, parameterMode[1], instructions[i+2])
+			instructions[instructions[i+3]] = value1 + value2
+			i = i + 4
+		case 2:
+			value1 = getValue(instructions, parameterMode[2], instructions[i+1])
+			value2 = getValue(instructions, parameterMode[1], instructions[i+2])
+			instructions[instructions[i+3]] = value1 * value2
+			i = i + 4
+		case 3:
+			instructions[instructions[i+1]] = input
+			i = i + 2
+		case 4:
+			value = getValue(instructions, parameterMode[2], instructions[i+1])
+			if value != 0 {
+				fmt.Printf("Part2 Solution:   %d   ", value)
+			}
+			i = i + 2
+		case 5: // Jump-if-true
+			value1 = getValue(instructions, parameterMode[2], instructions[i+1])
+			value2 = getValue(instructions, parameterMode[1], instructions[i+2])
+			if value1 != 0 {
+				i = value2
+			} else {
+				i = i + 3
+			}
+		case 6: // Jump-if-false
+			value1 = getValue(instructions, parameterMode[2], instructions[i+1])
+			value2 = getValue(instructions, parameterMode[1], instructions[i+2])
+			if value1 == 0 {
+				i = value2
+			} else {
+				i = i + 3
+			}
+		case 7: // Less than
+			value1 = getValue(instructions, parameterMode[2], instructions[i+1])
+			value2 = getValue(instructions, parameterMode[1], instructions[i+2])
+			if value1 < value2 {
+				instructions[instructions[i+3]] = 1
+			} else {
+				instructions[instructions[i+3]] = 0
+			}
+			i = i + 4
+		case 8: // Less than
+			value1 = getValue(instructions, parameterMode[2], instructions[i+1])
+			value2 = getValue(instructions, parameterMode[1], instructions[i+2])
+			if value1 == value2 {
+				instructions[instructions[i+3]] = 1
+			} else {
+				instructions[instructions[i+3]] = 0
+			}
+			i = i + 4
+		case 99:
+			print("\nChao\n")
+			return
+		}
+	}
+
+}
+
 func main() {
 	instructions := loadNumbers()
-	run(instructions)
+
+	part1Instructions := make([]int, len(instructions))
+	copy(part1Instructions, instructions)
+	runPart1(part1Instructions)
+
+	runPart2(instructions)
 }
