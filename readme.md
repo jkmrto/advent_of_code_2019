@@ -12,4 +12,5 @@ go test  day1/main_test.go day1/main.go
 
 ```Bash
 go get github.com/stretchr/testify/assert
+go get github.com/gitchander/permutation
 ```
