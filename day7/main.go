@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/gitchander/permutation"
 	"io/ioutil"
 	"log"
 	"strconv"
 	"strings"
+	"sync"
+
+	"github.com/gitchander/permutation"
 )
 
 func intToSlice(input int) []int {
@@ -50,7 +52,7 @@ func getValue(instructions []int, parameterMode int, value int) int {
 	return -1
 }
 
-func RunAmplifier(label string, originalInstructions []int, input <-chan int, output chan<- int) {
+func RunAmplifier(label string, wg sync.WaitGroup, originalInstructions []int, input <-chan int, output chan<- int) {
 	var value1 int
 	var value2 int
 	var value int
@@ -76,9 +78,9 @@ func RunAmplifier(label string, originalInstructions []int, input <-chan int, ou
 			instructions[instructions[i+3]] = value1 * value2
 			i = i + 4
 		case 3:
-			fmt.Printf("%s is waiting for input\n", label)
+			// fmt.Printf("%s is waiting for input\n", label)
 			phase := <-input
-			fmt.Printf("%s input has arrived: %d\n", label, phase)
+			// fmt.Printf("%s input has arrived: %d\n", label, phase)
 			instructions[instructions[i+1]] = phase
 			i = i + 2
 		case 4:
@@ -122,6 +124,8 @@ func RunAmplifier(label string, originalInstructions []int, input <-chan int, ou
 			i = i + 4
 		case 99:
 			// print("\nChao\n")
+			close(output)
+			wg.Done()
 			return
 		}
 	}
@@ -150,14 +154,15 @@ func ExecuteAmplificationPipeline(originalInstructions []int, phases []int) int 
 	chanDtoE := make(chan int, 1)
 	chanEtoOutput := make(chan int, 1)
 
-	go RunAmplifier("A", originalInstructions, chanToA, chanAtoB)
-	go RunAmplifier("B", originalInstructions, chanAtoB, chanBtoC)
-	go RunAmplifier("C", originalInstructions, chanBtoC, chanCtoD)
-	go RunAmplifier("D", originalInstructions, chanCtoD, chanDtoE)
-	go RunAmplifier("E", originalInstructions, chanDtoE, chanEtoOutput)
+	var wg sync.WaitGroup
+	wg.Add(5)
+	go RunAmplifier("A", wg, originalInstructions, chanToA, chanAtoB)
+	go RunAmplifier("B", wg, originalInstructions, chanAtoB, chanBtoC)
+	go RunAmplifier("C", wg, originalInstructions, chanBtoC, chanCtoD)
+	go RunAmplifier("D", wg, originalInstructions, chanCtoD, chanDtoE)
+	go RunAmplifier("E", wg, originalInstructions, chanDtoE, chanEtoOutput)
 
 	// Startup with phases
-
 	chanToA <- phases[0]
 	chanAtoB <- phases[1]
 	chanBtoC <- phases[2]
@@ -166,6 +171,50 @@ func ExecuteAmplificationPipeline(originalInstructions []int, phases []int) int 
 	chanToA <- 0
 
 	return <-chanEtoOutput
+}
+
+func ExecuteAmplificationWithFeedbackLoop(originalInstructions []int, phases []int) int {
+
+	chanToA := make(chan int, 1)
+	chanAtoB := make(chan int, 1)
+	chanBtoC := make(chan int, 1)
+	chanCtoD := make(chan int, 1)
+	chanDtoE := make(chan int, 1)
+	chanEtoOutput := make(chan int, 1)
+
+	var feedbackValue int
+	var wg sync.WaitGroup
+
+	wg.Add(5)
+	go RunAmplifier("A", wg, originalInstructions, chanToA, chanAtoB)
+	go RunAmplifier("B", wg, originalInstructions, chanAtoB, chanBtoC)
+	go RunAmplifier("C", wg, originalInstructions, chanBtoC, chanCtoD)
+	go RunAmplifier("D", wg, originalInstructions, chanCtoD, chanDtoE)
+	go RunAmplifier("E", wg, originalInstructions, chanDtoE, chanEtoOutput)
+
+	// Startup with phases
+	chanToA <- phases[0]
+	chanAtoB <- phases[1]
+	chanBtoC <- phases[2]
+	chanCtoD <- phases[3]
+	chanDtoE <- phases[4]
+	chanToA <- 0
+
+	for {
+		valueReceived, isActive := <-chanEtoOutput
+		fmt.Printf("Feedback value: %d, isActive: %+v", feedbackValue, isActive)
+
+		if isActive == true {
+			feedbackValue = valueReceived
+			chanToA <- feedbackValue
+		} else {
+			fmt.Printf("Solution: %d", feedbackValue)
+			return feedbackValue
+		}
+	}
+
+	wg.Wait()
+	return 0
 }
 
 func max(values []int) int {
@@ -180,8 +229,7 @@ func max(values []int) int {
 	return max
 }
 
-func main() {
-	instructions := LoadInstructions("./day7/input")
+func part1(instructions []int) {
 	phases := []int{0, 1, 2, 3, 4}
 	phaseSequences := permutation.New(permutation.IntSlice(phases))
 	outputs := []int{}
@@ -190,5 +238,23 @@ func main() {
 		output := ExecuteAmplificationPipeline(instructions, phases)
 		outputs = append(outputs, output)
 	}
-	fmt.Printf("Ejercicio 7: %v\n", max(outputs))
+	fmt.Printf("Ejercicio 7 Parte1: %v\n", max(outputs))
+}
+
+func part2(instructions []int) {
+	phases := []int{5, 6, 7, 8, 9}
+	phaseSequences := permutation.New(permutation.IntSlice(phases))
+	outputs := []int{}
+	for phaseSequences.Next() {
+		fmt.Printf("\n")
+		output := ExecuteAmplificationWithFeedbackLoop(instructions, phases)
+		outputs = append(outputs, output)
+	}
+	fmt.Printf("Ejercicio 7 Parte2: %v\n", max(outputs))
+}
+
+func main() {
+	instructions := LoadInstructions("./day7/input")
+	part1(instructions)
+	part2(instructions)
 }
