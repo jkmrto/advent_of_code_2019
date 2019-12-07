@@ -50,12 +50,14 @@ func getValue(instructions []int, parameterMode int, value int) int {
 	return -1
 }
 
-func Run(instructions []int, inputs []int) int {
-	var output []int
+func RunAmplifier(label string, originalInstructions []int, input <-chan int, output chan<- int) {
 	var value1 int
 	var value2 int
 	var value int
 	i := 0
+
+	instructions := make([]int, len(originalInstructions))
+	copy(instructions, originalInstructions)
 
 	for {
 		opCode, parameterMode := ProcessInstruction(instructions[i])
@@ -74,12 +76,15 @@ func Run(instructions []int, inputs []int) int {
 			instructions[instructions[i+3]] = value1 * value2
 			i = i + 4
 		case 3:
-			instructions[instructions[i+1]] = inputs[0]
-			inputs = inputs[1:]
+			fmt.Printf("%s is waiting for input\n", label)
+			phase := <-input
+			fmt.Printf("%s input has arrived: %d\n", label, phase)
+			instructions[instructions[i+1]] = phase
 			i = i + 2
 		case 4:
 			value = getValue(instructions, parameterMode[2], instructions[i+1])
-			output = append(output, value)
+			fmt.Printf("%s is waiting to sent his output\n", label)
+			output <- value
 			i = i + 2
 		case 5: // Jump-if-true
 			value1 = getValue(instructions, parameterMode[2], instructions[i+1])
@@ -117,7 +122,7 @@ func Run(instructions []int, inputs []int) int {
 			i = i + 4
 		case 99:
 			// print("\nChao\n")
-			return output[len(output)-1]
+			return
 		}
 	}
 }
@@ -136,14 +141,31 @@ func LoadInstructions(path string) []int {
 	return numbers
 }
 
-func ExecuteAmplificationPipeline(instructions []int, phases []int) int {
-	lastAmpOutput := 0
-	tempInstructions := make([]int, len(instructions))
-	for _, phase := range phases {
-		copy(tempInstructions, instructions)
-		lastAmpOutput = Run(tempInstructions, []int{phase, lastAmpOutput})
-	}
-	return lastAmpOutput
+func ExecuteAmplificationPipeline(originalInstructions []int, phases []int) int {
+
+	chanToA := make(chan int, 1)
+	chanAtoB := make(chan int, 1)
+	chanBtoC := make(chan int, 1)
+	chanCtoD := make(chan int, 1)
+	chanDtoE := make(chan int, 1)
+	chanEtoOutput := make(chan int, 1)
+
+	go RunAmplifier("A", originalInstructions, chanToA, chanAtoB)
+	go RunAmplifier("B", originalInstructions, chanAtoB, chanBtoC)
+	go RunAmplifier("C", originalInstructions, chanBtoC, chanCtoD)
+	go RunAmplifier("D", originalInstructions, chanCtoD, chanDtoE)
+	go RunAmplifier("E", originalInstructions, chanDtoE, chanEtoOutput)
+
+	// Startup with phases
+
+	chanToA <- phases[0]
+	chanAtoB <- phases[1]
+	chanBtoC <- phases[2]
+	chanCtoD <- phases[3]
+	chanDtoE <- phases[4]
+	chanToA <- 0
+
+	return <-chanEtoOutput
 }
 
 func max(values []int) int {
@@ -164,7 +186,7 @@ func main() {
 	phaseSequences := permutation.New(permutation.IntSlice(phases))
 	outputs := []int{}
 	for phaseSequences.Next() {
-		// fmt.Printf("%+v\n", phases)
+		fmt.Printf("\n")
 		output := ExecuteAmplificationPipeline(instructions, phases)
 		outputs = append(outputs, output)
 	}
