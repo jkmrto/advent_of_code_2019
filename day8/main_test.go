@@ -27,14 +27,22 @@ func TestBuildImage1(t *testing.T) {
 	assert.Equal(t, expected, image, "FUCK")
 }
 
-func TestBuildImage2(t *testing.T) {
-	pixels := []int{0222112222120000}
-	image := BuildImage(pixels, 2, 3)
+func TestBuildImage3(t *testing.T) {
+	pixels := []int{0, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 2, 0, 0, 0, 0}
+	image := BuildImage(pixels, 2, 2)
 	expected := [][][]int{
-		{{1, 2, 3}, {4, 5, 6}},
-		{{7, 8, 9}, {10, 11, 12}},
-		{{13, 14, 15}, {16, 17, 18}},
+		{{0, 2}, {2, 2}},
+		{{1, 1}, {2, 2}},
+		{{2, 2}, {1, 2}},
+		{{0, 0}, {0, 0}},
 	}
+	assert.Equal(t, expected, image, "FUCK")
+}
+
+func TestPart2Example(t *testing.T) {
+	pixels := []int{0, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 2, 0, 0, 0, 0}
+	image := Part2(pixels, 2, 2)
+	expected := [][]int{{0, 1}, {1, 0}}
 	assert.Equal(t, expected, image, "FUCK")
 }
 

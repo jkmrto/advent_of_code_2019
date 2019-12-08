@@ -31,12 +31,11 @@ func BuildLayer(pixels []int, tall int, wide int) [][]int {
 
 func BuildImage(pixels []int, tall int, wide int) [][][]int {
 	layers := len(pixels) / (tall * wide)
-	fmt.Printf("Layers: %d", layers)
 
 	image := [][][]int{}
 
 	for layerIndex := 0; layerIndex < layers; layerIndex++ {
-		fmt.Printf("From:%d to %d\n", (layerIndex)*(tall*wide), (layerIndex+1)*(tall*wide))
+		// fmt.Printf("From:%d to %d\n", (layerIndex)*(tall*wide), (layerIndex+1)*(tall*wide))
 		layerPixels := pixels[(layerIndex)*(tall*wide) : (layerIndex+1)*(tall*wide)]
 		image = append(image, BuildLayer(layerPixels, tall, wide))
 	}
@@ -56,7 +55,7 @@ func CountOccurrences(numbers []int) map[int]int {
 	return tempDigitCount
 }
 
-func part1(pixels []int, tall int, wide int) {
+func part1(pixels []int, tall int, wide int) int {
 	digitsCountPerLayer := []map[int]int{}
 
 	layers := len(pixels) / (tall * wide)
@@ -74,7 +73,30 @@ func part1(pixels []int, tall int, wide int) {
 		}
 	}
 
-	fmt.Printf("Part 1 Solution :%d\n", minZerosLayerDigitsCount[1]*minZerosLayerDigitsCount[2])
+	return minZerosLayerDigitsCount[1] * minZerosLayerDigitsCount[2]
+}
+
+func selectFirstVisiblePixel(image [][][]int, row int, column int) int {
+	for _, layer := range image {
+		if layer[row][column] != 2 {
+			return layer[row][column]
+		}
+	}
+	return -1
+}
+
+func Part2(pixels []int, tall int, wide int) [][]int {
+	image := BuildImage(pixels, tall, wide)
+
+	renderedImage := [][]int{}
+	for row := 0; row < tall; row++ {
+		renderedRow := make([]int, wide)
+		for column := 0; column < wide; column++ {
+			renderedRow[column] = selectFirstVisiblePixel(image, row, column)
+		}
+		renderedImage = append(renderedImage, renderedRow)
+	}
+	return renderedImage
 }
 
 func main() {
@@ -82,5 +104,11 @@ func main() {
 	const wide = 25
 	const tall = 6
 
-	part1(pixels, tall, wide)
+	fmt.Printf("Part 1 Solution :%d\n", part1(pixels, 6, 25))
+	part2Solution := Part2(pixels, 6, 25)
+
+	//Loop to print part2 Solution
+	for _, row := range part2Solution {
+		fmt.Printf("%+v\n", row)
+	}
 }
