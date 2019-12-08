@@ -6,6 +6,8 @@ import (
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/advent_of_code_2019/utils"
 )
 
 func loadNumbers() []int {
@@ -18,29 +20,8 @@ func loadNumbers() []int {
 	return numbers
 }
 
-func intToSlice(input int) []int {
-	s := strconv.Itoa(input)
-	slice := []int{}
-
-	for i := 0; i < len(s); i++ {
-		value, _ := strconv.Atoi(string(s[i]))
-		slice = append(slice, value)
-	}
-	return slice
-}
-
-func addPading(slice []int, digits int) []int {
-	finalSlice := make([]int, digits)
-	offset := digits - len(slice)
-
-	for i := 0; i < len(slice); i++ {
-		finalSlice[offset+i] = slice[i]
-	}
-	return finalSlice
-}
-
 func ProcessInstruction(instruction int) (opCode int, parametersMode []int) {
-	base := addPading(intToSlice(instruction), 5)
+	base := utils.AddPading(utils.IntToSlice(instruction), 5)
 	parametersMode = base[0:3]
 	opCode = base[3]*10 + base[4]
 	return

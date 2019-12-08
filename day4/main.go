@@ -1,25 +1,14 @@
 package main
 
-import "fmt"
-import "math"
+import (
+	"fmt"
+	"github.com/advent_of_code_2019/utils"
+)
 
 func divmod(numerator int, denominator int) (quotient int, remainder int) {
 	quotient = numerator / denominator
 	remainder = numerator % denominator
 	return
-}
-
-func intToSlice(value int) []int {
-	slice := []int{}
-	digitPos := 5
-
-	for digitPos >= 0 {
-		quotient, _ := divmod(value, int(math.Pow10(digitPos)))
-		value = value - quotient*int(math.Pow10(digitPos))
-		slice = append(slice, quotient)
-		digitPos--
-	}
-	return slice
 }
 
 func equalAdjuntDigits(slice []int, n_adjunts int) bool {
@@ -89,7 +78,7 @@ func main() {
 	part2Counter := 0
 
 	for value := upRange; value < downRange; value++ {
-		slice = intToSlice(value)
+		slice = utils.IntToSlice(value)
 
 		if isIncreasing(slice) {
 			fmt.Printf("\nIs increasing: %+v", slice)

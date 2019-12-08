@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/advent_of_code_2019/utils"
 	"io/ioutil"
 	"strconv"
 )
@@ -42,19 +43,6 @@ func BuildImage(pixels []int, tall int, wide int) [][][]int {
 	return image
 }
 
-func CountOccurrences(numbers []int) map[int]int {
-	tempDigitCount := map[int]int{}
-	for _, pixel := range numbers {
-		_, ok := tempDigitCount[pixel]
-		if ok {
-			tempDigitCount[pixel] = tempDigitCount[pixel] + 1
-		} else {
-			tempDigitCount[pixel] = 1
-		}
-	}
-	return tempDigitCount
-}
-
 func part1(pixels []int, tall int, wide int) int {
 	digitsCountPerLayer := []map[int]int{}
 
@@ -63,7 +51,7 @@ func part1(pixels []int, tall int, wide int) int {
 	for layerIndex := 0; layerIndex < layers; layerIndex++ {
 		layerPixels := pixels[(layerIndex)*(tall*wide) : (layerIndex+1)*(tall*wide)]
 
-		digitsCountPerLayer = append(digitsCountPerLayer, CountOccurrences(layerPixels))
+		digitsCountPerLayer = append(digitsCountPerLayer, utils.CountOccurrences(layerPixels))
 	}
 
 	minZerosLayerDigitsCount := digitsCountPerLayer[0]

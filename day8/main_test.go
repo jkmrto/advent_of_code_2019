@@ -45,13 +45,3 @@ func TestPart2Example(t *testing.T) {
 	expected := [][]int{{0, 1}, {1, 0}}
 	assert.Equal(t, expected, image, "FUCK")
 }
-
-func TestCountOccurrences(t *testing.T) {
-	pixels := []int{0, 1, 1, 2, 2, 2, 2}
-	expected := map[int]int{
-		0: 1,
-		1: 2,
-		2: 4,
-	}
-	assert.Equal(t, expected, CountOccurrences(pixels), "FUCK")
-}

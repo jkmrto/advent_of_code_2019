@@ -8,32 +8,12 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/advent_of_code_2019/utils"
 	"github.com/gitchander/permutation"
 )
 
-func intToSlice(input int) []int {
-	s := strconv.Itoa(input)
-	slice := []int{}
-
-	for i := 0; i < len(s); i++ {
-		value, _ := strconv.Atoi(string(s[i]))
-		slice = append(slice, value)
-	}
-	return slice
-}
-
-func addPading(slice []int, digits int) []int {
-	finalSlice := make([]int, digits)
-	offset := digits - len(slice)
-
-	for i := 0; i < len(slice); i++ {
-		finalSlice[offset+i] = slice[i]
-	}
-	return finalSlice
-}
-
 func ProcessInstruction(instruction int) (opCode int, parametersMode []int) {
-	base := addPading(intToSlice(instruction), 5)
+	base := addPading(utils.IntToSlice(instruction), 5)
 	parametersMode = base[0:3]
 	opCode = base[3]*10 + base[4]
 	return
@@ -217,18 +197,6 @@ func ExecuteAmplificationWithFeedbackLoop(originalInstructions []int, phases []i
 	return 0
 }
 
-func max(values []int) int {
-	max := 0
-
-	for _, value := range values {
-		if value > max {
-			max = value
-		}
-	}
-
-	return max
-}
-
 func part1(instructions []int) {
 	phases := []int{0, 1, 2, 3, 4}
 	phaseSequences := permutation.New(permutation.IntSlice(phases))
@@ -238,7 +206,7 @@ func part1(instructions []int) {
 		output := ExecuteAmplificationPipeline(instructions, phases)
 		outputs = append(outputs, output)
 	}
-	fmt.Printf("Ejercicio 7 Parte1: %v\n", max(outputs))
+	fmt.Printf("Ejercicio 7 Parte1: %v\n", utils.Max(outputs))
 }
 
 func part2(instructions []int) {
@@ -250,7 +218,7 @@ func part2(instructions []int) {
 		output := ExecuteAmplificationWithFeedbackLoop(instructions, phases)
 		outputs = append(outputs, output)
 	}
-	fmt.Printf("Ejercicio 7 Parte2: %v\n", max(outputs))
+	fmt.Printf("Ejercicio 7 Parte2: %v\n", utils.Max(outputs))
 }
 
 func main() {
