@@ -1,6 +1,11 @@
 package utils
 
-import "strconv"
+import (
+	"io/ioutil"
+	"log"
+	"strconv"
+	"strings"
+)
 
 func CountOccurrences(numbers []int) map[int]int {
 	tempDigitCount := map[int]int{}
@@ -46,4 +51,18 @@ func Max(values []int) int {
 	}
 
 	return max
+}
+
+func LoadInstructions(path string) []int {
+	var numbers []int
+	bytes, err := ioutil.ReadFile(path)
+
+	if err != nil {
+		log.Panic(err)
+	}
+	for _, str := range strings.Split(string(bytes), ",") {
+		integer, _ := strconv.Atoi(str)
+		numbers = append(numbers, integer)
+	}
+	return numbers
 }

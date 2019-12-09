@@ -2,10 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
-	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/advent_of_code_2019/utils"
@@ -13,7 +10,7 @@ import (
 )
 
 func ProcessInstruction(instruction int) (opCode int, parametersMode []int) {
-	base := addPading(utils.IntToSlice(instruction), 5)
+	base := utils.AddPading(utils.IntToSlice(instruction), 5)
 	parametersMode = base[0:3]
 	opCode = base[3]*10 + base[4]
 	return
@@ -111,20 +108,6 @@ func RunAmplifier(label string, wg sync.WaitGroup, originalInstructions []int, i
 	}
 }
 
-func LoadInstructions(path string) []int {
-	var numbers []int
-	bytes, err := ioutil.ReadFile(path)
-
-	if err != nil {
-		log.Panic(err)
-	}
-	for _, str := range strings.Split(string(bytes), ",") {
-		integer, _ := strconv.Atoi(str)
-		numbers = append(numbers, integer)
-	}
-	return numbers
-}
-
 func ExecuteAmplificationPipeline(originalInstructions []int, phases []int) int {
 
 	chanToA := make(chan int, 1)
@@ -218,11 +201,11 @@ func part2(instructions []int) {
 		output := ExecuteAmplificationWithFeedbackLoop(instructions, phases)
 		outputs = append(outputs, output)
 	}
-	fmt.Printf("Ejercicio 7 Parte2: %v\n", utils.Max(outputs))
+	fmt.Printf("\nEjercicio 7 Parte2: %v\n", utils.Max(outputs))
 }
 
 func main() {
-	instructions := LoadInstructions("./day7/input")
+	instructions := utils.LoadInstructions("./day7/input")
 	part1(instructions)
 	part2(instructions)
 }
