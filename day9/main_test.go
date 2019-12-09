@@ -65,3 +65,19 @@ func TestPart1(t *testing.T) {
 	output := intcode.WaitAndAccumulateOutput(outputChannel)
 	assert.Equal(t, 3780860499, output[0], "FUCK")
 }
+
+func TestPart2(t *testing.T) {
+	instructions := utils.LoadInstructions("input")
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	inputChannel := make(chan int, 1)
+	outputChannel := make(chan int, 1)
+	go intcode.RunAmplifier("", wg, instructions, inputChannel, outputChannel)
+
+	// Start test mode
+	inputChannel <- 2
+
+	output := intcode.WaitAndAccumulateOutput(outputChannel)
+	assert.Equal(t, 33343, output[0], "FUCK")
+}
