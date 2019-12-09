@@ -2,11 +2,10 @@ Advent of Code 2019
 
 My code for Advent of code 2018: https://adventofcode.com/
 
-## Execute test per day
+## Tests
 
 ```Bash
-go test  day1/main_test.go day1/main.go
-go test  utils/utils_test.go utils/utils.go  
+make tests
 ```
 
 ## Install dependencies:
