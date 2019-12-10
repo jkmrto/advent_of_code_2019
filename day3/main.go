@@ -76,13 +76,6 @@ func buildPath(instructions []string) []pos {
 	return positions
 }
 
-func Abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
-}
-
 func findNearestCrossPoint(crossPoints []crossPoint) int {
 	minDistance := Abs(crossPoints[0].point.x) + Abs(crossPoints[0].point.y)
 	var tempDistance int

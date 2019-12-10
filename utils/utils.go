@@ -66,3 +66,26 @@ func LoadInstructions(path string) []int {
 	}
 	return numbers
 }
+
+// greatest common divisor (GCD) via Euclidean algorithm
+func GCD(a, b int) int {
+	for b != 0 {
+		t := b
+		b = a % b
+		a = t
+	}
+	return a
+}
+
+func DivMod(numerator int, denominator int) (quotient int, remainder int) {
+	quotient = numerator / denominator
+	remainder = numerator % denominator
+	return
+}
+
+func Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}

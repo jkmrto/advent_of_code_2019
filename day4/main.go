@@ -5,12 +5,6 @@ import (
 	"github.com/advent_of_code_2019/utils"
 )
 
-func divmod(numerator int, denominator int) (quotient int, remainder int) {
-	quotient = numerator / denominator
-	remainder = numerator % denominator
-	return
-}
-
 func equalAdjuntDigits(slice []int, n_adjunts int) bool {
 	return areAnyEquals(segmentByAdjunts(slice, n_adjunts))
 }
