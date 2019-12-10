@@ -60,8 +60,8 @@ type angle struct {
 func buildRadar(board [][]string, stationPosY int, stationPosX int) int {
 	radar := map[angle][]int{}
 	for y := 0; y < len(board); y++ {
-		for x := 0; x < len(board); x++ {
-			if board[y][x] == "#" {
+		for x := 0; x < len(board[0]); x++ {
+			if board[y][x] == "#" && (y != stationPosY || x != stationPosX) {
 				// fmt.Printf("Asteroid at: (%d, %d)", x, y)
 				// fmt.Printf("\tRelative to Station(%d, %d)", x-stationPosX, y-stationPosY)
 				ang, step := calculateAngleAndSteps(x-stationPosX, y-stationPosY)
@@ -94,24 +94,29 @@ func addToRadar(asteroidRef map[angle][]int, ang angle, ratio int) {
 	}
 }
 
-func main() {
-	// board := LoadBoard("./day10/example1")
-	board := LoadBoard("./day10/input")
+func part1(board [][]string) (maxVisibleAsteroids int, maxVisibleAsteroidsPosX int, maxVisibleAsteroidsPosY int) {
+	maxVisibleAsteroids = 0
 
-	print(board[0][1])
-	fmt.Printf("%+v\n", board)
-
-	maxVisibleAsteroids := 0
 	for y := 0; y < len(board); y++ {
-		for x := 0; x < len(board); x++ {
+		for x := 0; x < len(board[0]); x++ {
 			if board[y][x] == "#" {
 				visibleAsteroids := buildRadar(board, y, x)
 				if visibleAsteroids > maxVisibleAsteroids {
+					maxVisibleAsteroidsPosX = x
+					maxVisibleAsteroidsPosX = y
 					maxVisibleAsteroids = visibleAsteroids
 				}
 			}
 		}
 	}
-	fmt.Printf("MaxVisibleAterodis: %d", maxVisibleAsteroids)
+	return
+}
+
+func main() {
+	// board := LoadBoard("./day10/example1")
+	board := LoadBoard("./day10/input")
+
+	maxVisible, posX, posY := part1(board)
+	fmt.Printf("Part2 Solution: (%d, %d): %d\n", posX, posY, maxVisible)
 
 }
