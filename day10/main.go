@@ -190,10 +190,17 @@ func remove(slice []asteroidsRelativeToStation, s int) []asteroidsRelativeToStat
 	return append(slice[:s], slice[s+1:]...)
 }
 
+/*
+x < 0 | x > 0
+y < 0 | y < 0
+-------------
+x < 0 | x > 0
+y > 0 | y > 0
+*/
 func CoordinatesToDegrees(x int, y int) float64 {
-	if y < 0 && x > 0 {
+	if y < 0 && x > 0 { // 1 Cuadrante
 		return math.Atan(float64(utils.Abs(x))/float64(utils.Abs(y))) * 180 / math.Pi
-	} else if y > 0 && x > 0 {
+	} else if y > 0 && x > 0 { // 2 Cuadrante
 		return 180 - math.Atan(float64(utils.Abs(x))/float64(utils.Abs(y)))*180/math.Pi
 	} else if y > 0 && x < 0 { // 3 cuadrante
 		return 180 + math.Atan(float64(utils.Abs(x))/float64(utils.Abs(y)))*180/math.Pi
