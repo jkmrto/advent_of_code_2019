@@ -83,7 +83,7 @@ func updatePostion(currentPostion pos, currentFacing pos, instruction int) (newP
 	return
 }
 
-func part1(instructions []int) {
+func paintPanel(panel map[pos]int, instructions []int) map[pos]int {
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -94,8 +94,6 @@ func part1(instructions []int) {
 
 	currentPos := pos{0, 0}
 	facingPos := pos{0, 1}
-
-	panel := map[pos]int{}
 
 	for {
 		inputColor := lookPositionColorInPanel(panel, currentPos)
@@ -111,10 +109,35 @@ func part1(instructions []int) {
 		if isActive {
 			currentPos, facingPos = updatePostion(currentPos, facingPos, facingChange)
 		} else {
-			break
+			return panel
 		}
 
 	}
+
+}
+
+func getPanelBounds(panel map[pos]int) (xUpBound, xDownBound, yUpBound, yDownBound int) {
+	for key := range panel {
+		if key.x > xUpBound {
+			xUpBound = key.x
+		} else if key.x < xDownBound {
+			xDownBound = key.x
+		}
+
+		if key.y > yUpBound {
+			yUpBound = key.y
+		} else if key.y < yDownBound {
+			yDownBound = key.y
+		}
+	}
+	return
+}
+
+func part1(instructions []int) {
+
+	panel := map[pos]int{}
+
+	panel = paintPanel(panel, instructions)
 
 	fmt.Printf("\n\nPart1 solution: %+v \n", len(keys(panel)))
 }
@@ -122,5 +145,23 @@ func part1(instructions []int) {
 func main() {
 	instructions := utils.LoadInstructions("./day11/input")
 
-	part1(instructions)
+	// part1(instructions)
+
+	panel := map[pos]int{}
+	panel[pos{0, 0}] = 1
+
+	panel = paintPanel(panel, instructions)
+
+	xUpBound, xDownBound, yUpBound, yDownBound := getPanelBounds(panel)
+
+	for y := yUpBound; y >= yDownBound; y-- {
+		fmt.Printf("\n")
+		for x := xDownBound; x <= xUpBound; x++ {
+			if lookPositionColorInPanel(panel, pos{x, y}) == 1 {
+				fmt.Print("#")
+			} else {
+				fmt.Print(".")
+			}
+		}
+	}
 }
