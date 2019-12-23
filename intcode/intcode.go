@@ -58,27 +58,28 @@ func RunAmplifier(label string, wg sync.WaitGroup, inputInstructions []int, inpu
 		fmt.Printf("%d\t %+v", opCode, parameterMode)
 
 		switch opCode {
-		case 1:
+		case 1: // Sum
 			value1 = getValue(instructions, parameterMode[2], instructions[i+1], relativeBase)
 			value2 = getValue(instructions, parameterMode[1], instructions[i+2], relativeBase)
 			destPosition := getPosition(parameterMode[0], instructions[i+3], relativeBase)
-			fmt.Printf(" Value1: %d, value2: %d, destPosition: %d", value1, value2, destPosition)
+			// fmt.Printf(" Value1: %d, value2: %d, destPosition: %d", value1, value2, destPosition)
 			instructions[destPosition] = value1 + value2
 			i = i + 4
-		case 2:
+		case 2: // Multiply
 			value1 = getValue(instructions, parameterMode[2], instructions[i+1], relativeBase)
 			value2 = getValue(instructions, parameterMode[1], instructions[i+2], relativeBase)
 			destPosition := getPosition(parameterMode[0], instructions[i+3], relativeBase)
 			fmt.Printf(" Value1: %d, value2: %d, destPosition: %d", value1, value2, destPosition)
 			instructions[destPosition] = value1 * value2
 			i = i + 4
-		case 3:
+		case 3: // Input
+			fmt.Printf("Waiting for intput:")
 			phase := <-input
-			destPosition := getPosition(parameterMode[0], instructions[i+3], relativeBase)
+			destPosition := getPosition(parameterMode[2], instructions[i+1], relativeBase)
 			fmt.Printf(" input: %d, destPosition: %d", phase, destPosition)
 			instructions[destPosition] = phase
 			i = i + 2
-		case 4:
+		case 4: // Output
 			value = getValue(instructions, parameterMode[2], instructions[i+1], relativeBase)
 			fmt.Printf("%s is waiting to sent his output: %d\n", label, value)
 			output <- value
