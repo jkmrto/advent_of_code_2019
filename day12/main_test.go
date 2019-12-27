@@ -6,28 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetGravityToMoon(t *testing.T) {
-
-	moon111 := moon{
-		coordinates{1, 1, 1},
-		coordinates{0, 0, 0},
-	}
-
-	moon222 := moon{
-		coordinates{2, 2, 2},
-		coordinates{0, 0, 0},
-	}
-
-	moon000 := moon{
-		coordinates{0, 0, 0},
-		coordinates{0, 0, 0},
-	}
-
-	assert.Equal(t, coordinates{1, 1, 1}, GetGravityToMoon(moon111, moon222), "FUCK")
-	assert.Equal(t, coordinates{-1, -1, -1}, GetGravityToMoon(moon111, moon000), "FUCK")
-	assert.Equal(t, coordinates{0, 0, 0}, GetGravityToMoon(moon111, moon111), "FUCK")
-}
-
 func testInput() []moon {
 	//	<x=-1, y=0, z=2>
 	moon1 := moon{
@@ -54,6 +32,28 @@ func testInput() []moon {
 
 	return []moon{moon1, moon2, moon3, moon4}
 
+}
+
+func TestGetGravityToMoon(t *testing.T) {
+
+	moon111 := moon{
+		coordinates{1, 1, 1},
+		coordinates{0, 0, 0},
+	}
+
+	moon222 := moon{
+		coordinates{2, 2, 2},
+		coordinates{0, 0, 0},
+	}
+
+	moon000 := moon{
+		coordinates{0, 0, 0},
+		coordinates{0, 0, 0},
+	}
+
+	assert.Equal(t, coordinates{1, 1, 1}, GetGravityToMoon(moon111, moon222), "FUCK")
+	assert.Equal(t, coordinates{-1, -1, -1}, GetGravityToMoon(moon111, moon000), "FUCK")
+	assert.Equal(t, coordinates{0, 0, 0}, GetGravityToMoon(moon111, moon111), "FUCK")
 }
 
 func TestGalaxyStep1(t *testing.T) {
@@ -104,4 +104,10 @@ func TestPart1(t *testing.T) {
 	moons := loadInput()
 	moons1000 := Simulate(moons, 1000)
 	assert.Equal(t, calculateUniversEnergy(moons1000), 12773, "FUCK")
+}
+
+func TestPeriodicity(t *testing.T) {
+	moonsOrigin := testInput()
+	assert.Equal(t, FindPeriodicity(moonsOrigin), 2772, "FUCK")
+
 }

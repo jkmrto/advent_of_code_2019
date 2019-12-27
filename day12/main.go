@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/advent_of_code_2019/utils"
 )
@@ -10,6 +11,18 @@ type coordinates struct {
 	x int
 	y int
 	z int
+}
+
+func (c *coordinates) getField(field string) int {
+	r := reflect.ValueOf(c)
+	f := reflect.Indirect(r).FieldByName(field)
+	return int(f.Int())
+}
+
+func getField(v *coordinates, field string) int {
+	r := reflect.ValueOf(v)
+	f := reflect.Indirect(r).FieldByName(field)
+	return int(f.Int())
 }
 
 type moon struct {
@@ -144,10 +157,6 @@ func UpdatePositions(moons []moon) []moon {
 	return updatedMoons
 }
 
-func calculateEnergy() {
-
-}
-
 func Simulate(moons []moon, steps int) []moon {
 
 	for i := 1; i <= steps; i++ {
@@ -168,6 +177,43 @@ func calculateUniversEnergy(moons []moon) int {
 	return sum
 }
 
+func FindPeriodicity(moonsOrigin []moon) int {
+	moons := make([]moon, len(moonsOrigin))
+	copy(moons, moonsOrigin)
+	periodX := findAxisPeriodicity(moonsOrigin, moons, "x")
+	periodY := findAxisPeriodicity(moonsOrigin, moons, "y")
+	periodZ := findAxisPeriodicity(moonsOrigin, moons, "z")
+	return utils.LCM(periodX, periodY, periodZ)
+}
+
+func findAxisPeriodicity(moonsOrigin []moon, moons []moon, axis string) int {
+	var step int = 0
+	for {
+		step++
+		moons = UpdateVelocities(moons)
+		moons = UpdatePositions(moons)
+
+		if isSamePosition(moonsOrigin, moons, axis) {
+			return step
+
+		}
+	}
+}
+
+func isSamePosition(moonsOrigin []moon, moons []moon, axis string) bool {
+	for i := 0; i < len(moonsOrigin); i++ {
+		if (&moons[i].position).getField(axis) != (&moonsOrigin[i].position).getField(axis) {
+			return false
+		}
+
+		if (&moons[i].velocity).getField(axis) != (&moonsOrigin[i].velocity).getField(axis) {
+			return false
+		}
+
+	}
+	return true
+}
+
 func part1() {
 	moons := loadInput()
 	moons1000 := Simulate(moons, 1000)
@@ -175,5 +221,9 @@ func part1() {
 }
 
 func main() {
+	part1()
 
+	moons := loadInput()
+	period := FindPeriodicity(moons)
+	fmt.Printf("\n Part2 solution: %+v\n", period)
 }
