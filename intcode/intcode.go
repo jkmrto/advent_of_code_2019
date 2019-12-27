@@ -54,8 +54,8 @@ func RunAmplifier(label string, wg sync.WaitGroup, inputInstructions []int, inpu
 
 	for {
 		opCode, parameterMode := ProcessInstruction(instructions[i])
-		fmt.Printf("\n%+v\t", instructions[i])
-		fmt.Printf("%d\t %+v", opCode, parameterMode)
+		// fmt.Printf("\n\n%+v\t", instructions[i])
+		// fmt.Printf("%d\t %+v", opCode, parameterMode)
 
 		switch opCode {
 		case 1: // Sum
@@ -69,27 +69,31 @@ func RunAmplifier(label string, wg sync.WaitGroup, inputInstructions []int, inpu
 			value1 = getValue(instructions, parameterMode[2], instructions[i+1], relativeBase)
 			value2 = getValue(instructions, parameterMode[1], instructions[i+2], relativeBase)
 			destPosition := getPosition(parameterMode[0], instructions[i+3], relativeBase)
-			fmt.Printf(" Value1: %d, value2: %d, destPosition: %d", value1, value2, destPosition)
+			// fmt.Printf(" Value1: %d, value2: %d, destPosition: %d", value1, value2, destPosition)
 			instructions[destPosition] = value1 * value2
 			i = i + 4
 		case 3: // Input
 			fmt.Printf("Waiting for intput:")
 			phase := <-input
 			destPosition := getPosition(parameterMode[2], instructions[i+1], relativeBase)
-			fmt.Printf(" input: %d, destPosition: %d", phase, destPosition)
+			// fmt.Printf(" input: %d, destPosition: %d", phase, destPosition)
 			instructions[destPosition] = phase
 			i = i + 2
 		case 4: // Output
 			value = getValue(instructions, parameterMode[2], instructions[i+1], relativeBase)
-			fmt.Printf("%s is waiting to sent his output: %d\n", label, value)
+			// fmt.Printf("%s is waiting to sent his output: %d\n", label, value)
 			output <- value
 			i = i + 2
 		case 5: // Jump-if-true
 			value1 = getValue(instructions, parameterMode[2], instructions[i+1], relativeBase)
 			value2 = getValue(instructions, parameterMode[1], instructions[i+2], relativeBase)
+			// fmt.Printf(" Value1: %d, Value2: %d", value1, value2)
+			// fmt.Printf("\t %d", i)
 			if value1 != 0 {
+				// print("\t do jump")
 				i = value2
 			} else {
+				// print("\t no jump")
 				i = i + 3
 			}
 		case 6: // Jump-if-false
@@ -111,7 +115,7 @@ func RunAmplifier(label string, wg sync.WaitGroup, inputInstructions []int, inpu
 				instructions[destPosition] = 0
 			}
 			i = i + 4
-		case 8: // Less than
+		case 8: // Equals
 			value1 = getValue(instructions, parameterMode[2], instructions[i+1], relativeBase)
 			value2 = getValue(instructions, parameterMode[1], instructions[i+2], relativeBase)
 			destPosition := getPosition(parameterMode[0], instructions[i+3], relativeBase)
