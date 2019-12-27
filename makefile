@@ -7,3 +7,4 @@ tests:
 	go test  day9/main_test.go day9/main.go
 	go test  day10/main_test.go day10/main.go
 	go test  day11/main_test.go day11/main.go
+	go test  day12/main_test.go day12/main.go
