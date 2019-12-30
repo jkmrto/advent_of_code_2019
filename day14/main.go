@@ -97,18 +97,18 @@ func GetInputFromStore(r Reaction, amountRequired int, store map[string]int) (ma
 	return scaledInput, store
 }
 
-func main() {
-	defer fmt.Printf("\n")
-	reactions := loadReactions("./day14/input")
-
-	missedComponents := reactions["FUEL"].input
-
-	missedComponentsIndex := keys(missedComponents)
+func getRequiredOre(amountRequired int) int {
 
 	store := make(map[string]int)
-	inputRequired := make(map[string]int)
 
-	ORE := 0
+	missedComponents := make(map[string]int)
+	for k := range reactions["FUEL"].input {
+		missedComponents[k] = amountRequired * reactions["FUEL"].input[k]
+	}
+
+	missedComponentsIndex := keys(missedComponents)
+	inputRequired := make(map[string]int)
+	ore := 0
 
 	for {
 		if len(missedComponentsIndex) == 0 {
@@ -125,7 +125,7 @@ func main() {
 			inputAmount := inputRequired[component]
 
 			if "ORE" == component {
-				ORE += inputAmount
+				ore += inputAmount
 				continue
 			} else {
 				_, exist := missedComponents[component]
@@ -143,5 +143,44 @@ func main() {
 
 	}
 
-	fmt.Printf("\nSolution: %+v", ORE)
+	// fmt.Printf("\nPrinter -> Ore: %+v, Store: %+v", ore, store)
+	return ore
+}
+
+func getLimits(fuel int) (int, int) {
+	oreForOne := getRequiredOre(1)
+	downLimit := fuel / oreForOne
+	upperLimit := downLimit * 2
+	return upperLimit, downLimit
+}
+
+func part2() int {
+	fuel := 1000000000000
+	upLimit, downLimit := getLimits(fuel)
+	for downLimit < upLimit {
+		h := downLimit + (upLimit-downLimit)/2
+		ore := getRequiredOre(h)
+		fmt.Printf("\nUp; %d, \t Down: %d, \t Ore: %d, \t distance: %d", upLimit, downLimit, ore, (upLimit - downLimit))
+		if ore < fuel {
+			downLimit = h + 1 // preserves f(i-1) == false
+		} else {
+			upLimit = h // preserves f(j) == true
+		}
+	}
+
+	return downLimit - 1
+}
+
+var reactions map[string]Reaction
+
+func main() {
+	reactions = loadReactions("./day14/input")
+
+	defer fmt.Printf("\n")
+	// reactions = loadReactions("./day14/input")
+
+	oreRequired := getRequiredOre(1)
+	fmt.Printf("\nPart 1 Solution: %+v", oreRequired)
+
+	fmt.Printf("\n Part 2 Solution: %d", part2())
 }
